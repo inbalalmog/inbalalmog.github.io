@@ -18,13 +18,23 @@ export class AppComponent {
   fetchDependencies(packageName, version) {
     console.log('fetchDependencies');
     const url = 'https://registry.npmjs.org/' + packageName + '/' + version;
-    let myRequest = new Request(url);
+    const myRequest = new Request(url);
     fetch(myRequest)
-    .then(function(response) {
+    .then((response) => {
       return response.json();
     })
-    .then(function(response) {
-        console.log(response['dependencies']);
+    .then((response) => {
+      const dependencies = response['dependencies'];
+      if (dependencies) {
+        console.log(dependencies);
+        for (const property in dependencies) {
+          if (dependencies.hasOwnProperty(property)) {
+              this.fetchDependencies(property, dependencies[property]);
+          }
+        }
+      }else {
+        console.log('no dependencies');
+      }
     });
   }
 }
