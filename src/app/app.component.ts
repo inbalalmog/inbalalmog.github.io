@@ -11,12 +11,21 @@ export class AppComponent {
   version: string;
   package: string;
   title = 'Snyk';
+  dependencies: string[];
+  ngOnInit() {
+    this.dependencies = [];
+  }
   onclick() {
     console.log('click');
-    this.fetchDependencies(this.package, this.version);
+    if (!this.version) {
+      this.version = 'latest';
+    }
+    if (this.package) {
+      this.fetchDependencies(this.package, this.version);
+    }
   }
   fetchDependencies(packageName, version) {
-    console.log('fetchDependencies');
+    console.log('fetch dependencies of', packageName);
     const url = 'https://registry.npmjs.org/' + packageName + '/' + version;
     const myRequest = new Request(url);
     fetch(myRequest)
@@ -26,14 +35,15 @@ export class AppComponent {
     .then((response) => {
       const dependencies = response['dependencies'];
       if (dependencies) {
-        console.log(dependencies);
+        console.log('dependencies of', packageName, ':', dependencies);
         for (const property in dependencies) {
-          if (dependencies.hasOwnProperty(property)) {
-              this.fetchDependencies(property, dependencies[property]);
+          if (dependencies.hasOwnProperty(property) && this.dependencies.indexOf(property) === -1) {
+            this.dependencies.push(property);
+            this.fetchDependencies(property, dependencies[property]);
           }
         }
       }else {
-        console.log('no dependencies');
+        console.log('no dependencies for', packageName);
       }
     });
   }
