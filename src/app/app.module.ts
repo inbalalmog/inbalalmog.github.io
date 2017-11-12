@@ -4,7 +4,7 @@ import {InputTextModule, TreeModule, TreeNode} from 'primeng/primeng';
 import { AppComponent } from './app.component';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/components/button/button';
-import { TreeService } from './tree.service';
+import { TreeService } from './services/tree.service';
 
 @NgModule({
   declarations: [

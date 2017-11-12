@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { TreeNode } from 'primeng/primeng';
-import { TreeService } from './tree.service';
+import { TreeService } from './services/tree.service';
 
 @Component({
   selector: 'app-root',
