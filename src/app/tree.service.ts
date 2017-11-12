@@ -5,7 +5,6 @@ import { TreeNode } from 'primeng/primeng';
 export class TreeService {
     fetchDependencies(node, dependenciesArray) {
         const self = this;
-        console.log('fetch dependencies of', node.label);
         const url = 'https://registry.npmjs.org/' + node.label + '/' + node.data;
         const myRequest = new Request(url);
         fetch(myRequest)
@@ -15,7 +14,6 @@ export class TreeService {
         .then((response) => {
           const dependencies = response['dependencies'];
           if (dependencies) {
-            console.log('dependencies of', node.label, ':', dependencies);
             for (const property in dependencies) {
               if (dependencies.hasOwnProperty(property) && dependenciesArray.indexOf(property) === -1) {
                 const newNode: TreeNode = {};
@@ -27,8 +25,6 @@ export class TreeService {
                 self.fetchDependencies(newNode, dependenciesArray);
               }
             }
-          }else {
-            console.log('no dependencies for', node.label);
           }
         });
     }

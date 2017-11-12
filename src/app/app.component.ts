@@ -10,7 +10,6 @@ import {TreeService} from './tree.service';
 export class AppComponent {
   version: string;
   package: string;
-  title = 'Snyk';
   dependenciesArray: string[] = [];
   tree: TreeNode[] = [];
 
@@ -18,7 +17,6 @@ export class AppComponent {
   }
 
   onclick() {
-    console.log('click');
     if (!this.version) {
       this.version = 'latest';
     }
@@ -31,7 +29,6 @@ export class AppComponent {
       node.children = [];
       this.tree.push(node);
       this.treeService.fetchDependencies(node, this.dependenciesArray);
-      console.log('node:', node);
     }
   }
 }
