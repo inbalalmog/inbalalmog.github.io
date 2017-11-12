@@ -12,6 +12,7 @@ export class AppComponent {
   package: string;
   dependenciesArray: string[] = [];
   tree: TreeNode[] = [];
+  cachedNodes: TreeNode[] = [];
 
   constructor(private treeService: TreeService) {
   }
@@ -28,7 +29,7 @@ export class AppComponent {
       node.data = this.version;
       node.children = [];
       this.tree.push(node);
-      this.treeService.fetchDependencies(node, this.dependenciesArray);
+      this.treeService.fetchDependencies(node, this.dependenciesArray, this.cachedNodes);
     }
   }
 }
