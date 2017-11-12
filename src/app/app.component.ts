@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { TreeNode } from 'primeng/primeng';
-import {TreeService} from './tree.service';
+import { TreeService } from './tree.service';
 
 @Component({
   selector: 'app-root',
@@ -24,10 +24,11 @@ export class AppComponent {
     if (this.package) {
       this.tree = [];
       this.dependenciesArray = [];
-      const node: TreeNode = {};
-      node.label = this.package;
-      node.data = this.version;
-      node.children = [];
+      const node: TreeNode = {
+        label: this.package,
+        data: this.version,
+        children: []
+      };
       this.tree.push(node);
       this.treeService.fetchDependencies(node, this.dependenciesArray, this.cachedNodes);
     }
