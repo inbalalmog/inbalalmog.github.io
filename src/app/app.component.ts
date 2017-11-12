@@ -19,6 +19,8 @@ export class AppComponent {
       this.version = 'latest';
     }
     if (this.package) {
+      this.tree = [];
+      this.dependenciesArray = [];
       const node: TreeNode = {};
       node.label = this.package;
       node.data = this.version;
