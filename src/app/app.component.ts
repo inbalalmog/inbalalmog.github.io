@@ -17,6 +17,38 @@ export class AppComponent {
   constructor(private treeService: TreeService) {
   }
 
+  getDependencies(node, dependenciesArray, cachedNodes) {
+    let cachedNode: TreeNode = this.treeService.getCachedNode(node, cachedNodes.slice());
+    if (cachedNode) {
+      this.goOverDependencies(node, cachedNode.children, dependenciesArray, cachedNodes);
+    } else {
+      this.treeService.fetchDependencies(node).then((dependencies) => {
+        cachedNode = {
+            label: node.label,
+            data: node.data,
+            children: dependencies
+        };
+        cachedNodes.push(cachedNode);
+        this.goOverDependencies(node, dependencies, dependenciesArray, cachedNodes);
+      });
+    }
+  }
+  goOverDependencies(node, dependencies, dependenciesArray, cachedNodes) {
+    if (dependencies) {
+      for (const property in dependencies) {
+        if (dependencies.hasOwnProperty(property) && dependenciesArray.indexOf(property) === -1) {
+          const newNode: TreeNode = {
+            label: property,
+            data: dependencies[property],
+            children: []
+          };
+          node.children.push(newNode);
+          dependenciesArray.push(property);
+          this.getDependencies(newNode, dependenciesArray, cachedNodes);
+        }
+      }
+    }
+  }
   onclick() {
     if (!this.version) {
       this.version = 'latest';
@@ -30,7 +62,7 @@ export class AppComponent {
         children: []
       };
       this.tree.push(node);
-      this.treeService.fetchDependencies(node, this.dependenciesArray, this.cachedNodes);
+      this.getDependencies(node, this.dependenciesArray, this.cachedNodes);
     }
   }
 }
