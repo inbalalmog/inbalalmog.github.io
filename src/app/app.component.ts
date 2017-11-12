@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
 import { Node } from './node.interface';
-
-
-var request = require('request');
+import { TreeNode } from 'primeng/primeng';
 
 @Component({
   selector: 'app-root',
@@ -13,24 +11,27 @@ export class AppComponent {
   version: string;
   package: string;
   title = 'Snyk';
-  dependencies: string[] = [];
-  node: Node = {};
+  dependenciesArray: string[] = [];
+  tree: TreeNode[] = [];
   onclick() {
     console.log('click');
     if (!this.version) {
       this.version = 'latest';
     }
     if (this.package) {
-      this.node.name = this.package;
-      this.node.version = this.version;
-      this.node.dependencies = [];
-      this.fetchDependencies(this.node);
-      console.log('node:', this.node);
+      const node: TreeNode = {};
+      node.label = this.package;
+      node.data = this.version;
+      node.children = [];
+      this.tree.push(node);
+      this.fetchDependencies(node);
+      console.log('node:', node);
     }
   }
   fetchDependencies(node) {
-    console.log('fetch dependencies of', node.name);
-    const url = 'https://registry.npmjs.org/' + node.name + '/' + node.version;
+    const self = this;
+    console.log('fetch dependencies of', node.label);
+    const url = 'https://registry.npmjs.org/' + node.label + '/' + node.data;
     const myRequest = new Request(url);
     fetch(myRequest)
     .then((response) => {
@@ -39,20 +40,21 @@ export class AppComponent {
     .then((response) => {
       const dependencies = response['dependencies'];
       if (dependencies) {
-        console.log('dependencies of', node.name, ':', dependencies);
+        console.log('dependencies of', node.label, ':', dependencies);
+        console.log('tree:', self.tree);
         for (const property in dependencies) {
-          if (dependencies.hasOwnProperty(property) && this.dependencies.indexOf(property) === -1) {
-            const newNode: Node = {};
-            newNode.name = property;
-            newNode.version = dependencies[property];
-            newNode.dependencies = [];
-            node.dependencies.push(newNode);
-            this.dependencies.push(property);
-            this.fetchDependencies(newNode);
+          if (dependencies.hasOwnProperty(property) && self.dependenciesArray.indexOf(property) === -1) {
+            const newNode: TreeNode = {};
+            newNode.label = property;
+            newNode.data = dependencies[property];
+            newNode.children = [];
+            node.children.push(newNode);
+            self.dependenciesArray.push(property);
+            self.fetchDependencies(newNode);
           }
         }
       }else {
-        console.log('no dependencies for', node.name);
+        console.log('no dependencies for', node.label);
       }
     });
   }
