@@ -6,8 +6,8 @@ export class TreeService {
   fetchDependencies(node): Promise<any> {
     return new Promise((resolve, reject) => {
       const url = 'https://registry.npmjs.org/' + node.label + '/' + node.data;
-      const myRequest = new Request(url);
-      fetch(myRequest)
+      const proxyurl = 'https://cors-anywhere.herokuapp.com/';
+      fetch(proxyurl + url)
       .then((response) => {
         return response.json();
       })
